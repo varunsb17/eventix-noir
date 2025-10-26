@@ -89,7 +89,7 @@ const Movies = () => {
             {movies.map((movie, index) => (
               <AnimatedCard key={movie.id} delay={index * 50}>
                 <Card className="group overflow-hidden border-border hover:border-primary/50 transition-all duration-500 bg-card">
-                  <Link to={`/movie/${movie.id}`}>
+                  <Link to={`/movies/${movie.id}`}>
                     <div className="aspect-[2/3] bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       <span className="text-6xl group-hover:scale-110 transition-transform duration-500">🎬</span>

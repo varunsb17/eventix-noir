@@ -37,8 +37,8 @@ const Home = () => {
             <Link to="/movies" className="text-foreground/70 hover:text-primary transition-colors font-medium">
               Movies
             </Link>
-            <Link to="/events" className="text-foreground/70 hover:text-primary transition-colors font-medium">
-              Events
+            <Link to="/bookings" className="text-foreground/70 hover:text-primary transition-colors font-medium">
+              My Bookings
             </Link>
             <Link to="/login">
               <Button variant="ghost" className="text-foreground/70 hover:text-foreground">
@@ -85,10 +85,10 @@ const Home = () => {
                     <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
-                <Link to="/events" className="flex-1 sm:flex-none">
+                <Link to="/bookings" className="flex-1 sm:flex-none">
                   <Button size="lg" variant="outline" className="w-full sm:w-auto border-primary/50 hover:bg-primary/10 group">
                     <Ticket className="h-5 w-5 mr-2" />
-                    Browse Events
+                    My Bookings
                     <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
@@ -113,7 +113,7 @@ const Home = () => {
             <div className="grid md:grid-cols-4 gap-8">
               {[
                 { number: "500+", label: "Movies Available" },
-                { number: "1000+", label: "Events Monthly" },
+                { number: "2M+", label: "Tickets Booked" },
                 { number: "50K+", label: "Happy Customers" },
                 { number: "99.9%", label: "Uptime" },
               ].map((stat, index) => (
@@ -155,8 +155,8 @@ const Home = () => {
               },
               {
                 icon: <Ticket className="h-8 w-8" />,
-                title: "Live Entertainment",
-                description: "Book tickets for concerts, sports events, and theatrical performances"
+                title: "Easy Seat Selection",
+                description: "Choose your preferred seats with our interactive seat map and secure booking"
               },
               {
                 icon: <Sparkles className="h-8 w-8" />,
