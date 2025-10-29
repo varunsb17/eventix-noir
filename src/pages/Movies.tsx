@@ -1,9 +1,12 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Ticket, ArrowLeft, Plus, Star } from "lucide-react";
+import { Ticket, ArrowLeft, Plus, Star, Loader2 } from "lucide-react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { moviesAPI } from "@/lib/api";
+import { toast } from "sonner";
 
 const AnimatedCard = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => {
   const { elementRef, isVisible } = useScrollAnimation();
@@ -22,16 +25,32 @@ const AnimatedCard = ({ children, delay = 0 }: { children: React.ReactNode; dela
 };
 
 const Movies = () => {
-  const movies = [
-    { id: 1, title: "The Last Journey", genre: "Action", rating: "8.5", price: "$12", year: "2024" },
-    { id: 2, title: "Silent Echoes", genre: "Drama", rating: "7.8", price: "$10", year: "2024" },
-    { id: 3, title: "Cosmic Dawn", genre: "Sci-Fi", rating: "9.1", price: "$15", year: "2025" },
-    { id: 4, title: "Mystery Boulevard", genre: "Thriller", rating: "8.2", price: "$12", year: "2024" },
-    { id: 5, title: "Summer Dreams", genre: "Romance", rating: "7.5", price: "$10", year: "2024" },
-    { id: 6, title: "Dark Legacy", genre: "Horror", rating: "8.7", price: "$12", year: "2025" },
-    { id: 7, title: "Urban Knights", genre: "Action", rating: "8.9", price: "$15", year: "2025" },
-    { id: 8, title: "The Reflection", genre: "Drama", rating: "8.3", price: "$12", year: "2024" },
-  ];
+  const [movies, setMovies] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchMovies();
+  }, []);
+
+  const fetchMovies = async () => {
+    try {
+      const data = await moviesAPI.getAll();
+      setMovies(data.movies);
+    } catch (error: any) {
+      toast.error("Failed to load movies");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -100,7 +119,7 @@ const Movies = () => {
                           {movie.title}
                         </h3>
                         <Badge variant="secondary" className="shrink-0 text-xs">
-                          {movie.year}
+                          {new Date(movie.release_date).getFullYear()}
                         </Badge>
                       </div>
                       <div className="flex items-center gap-2">
@@ -111,7 +130,7 @@ const Movies = () => {
                         </div>
                       </div>
                       <div className="flex items-center justify-between pt-2">
-                        <span className="text-2xl font-bold text-primary">{movie.price}</span>
+                        <span className="text-sm font-medium text-muted-foreground">{movie.duration} min</span>
                         <Button size="sm" className="bg-gradient-to-r from-primary to-accent hover:opacity-90">
                           Book Now
                         </Button>

@@ -5,16 +5,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Ticket, Mail, Lock } from "lucide-react";
+import { authAPI, authHelpers } from "@/lib/api";
+import { toast } from "sonner";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login:", { email, password });
-    navigate("/");
+    setLoading(true);
+    
+    try {
+      const response = await authAPI.login({ email, password });
+      authHelpers.setToken(response.token);
+      toast.success("Login successful!");
+      navigate("/");
+    } catch (error: any) {
+      toast.error(error.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -70,8 +83,9 @@ const Login = () => {
             <Button 
               type="submit" 
               className="w-full h-12 text-base bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
+              disabled={loading}
             >
-              Sign In
+              {loading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
         </CardContent>

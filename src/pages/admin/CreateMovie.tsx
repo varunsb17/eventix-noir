@@ -7,25 +7,46 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Film } from "lucide-react";
 import { toast } from "sonner";
+import { moviesAPI } from "@/lib/api";
 
 const CreateMovie = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     genre: "",
     rating: "",
     duration: "",
-    price: "",
+    language: "",
+    release_date: "",
     description: "",
-    director: "",
-    cast: "",
+    poster_url: "",
+    trailer_url: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Create movie:", formData);
-    toast.success("Movie created successfully!");
-    navigate("/movies");
+    setLoading(true);
+    
+    try {
+      await moviesAPI.create({
+        title: formData.title,
+        description: formData.description,
+        duration: parseInt(formData.duration),
+        language: formData.language,
+        genre: formData.genre,
+        release_date: formData.release_date,
+        rating: formData.rating,
+        poster_url: formData.poster_url,
+        trailer_url: formData.trailer_url,
+      });
+      toast.success("Movie created successfully!");
+      navigate("/movies");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to create movie");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -88,7 +109,7 @@ const CreateMovie = () => {
                     name="rating"
                     value={formData.rating}
                     onChange={handleChange}
-                    placeholder="e.g. 8.5"
+                    placeholder="U, UA, A"
                     className="h-12 border-border"
                     required
                   />
@@ -96,51 +117,66 @@ const CreateMovie = () => {
               </div>
               <div className="grid sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="duration" className="text-base">Duration *</Label>
+                  <Label htmlFor="duration" className="text-base">Duration (minutes) *</Label>
                   <Input
                     id="duration"
                     name="duration"
+                    type="number"
                     value={formData.duration}
                     onChange={handleChange}
-                    placeholder="e.g. 2h 15m"
+                    placeholder="135"
                     className="h-12 border-border"
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="price" className="text-base">Ticket Price *</Label>
+                  <Label htmlFor="language" className="text-base">Language *</Label>
                   <Input
-                    id="price"
-                    name="price"
-                    value={formData.price}
+                    id="language"
+                    name="language"
+                    value={formData.language}
                     onChange={handleChange}
-                    placeholder="e.g. $12"
+                    placeholder="English"
+                    className="h-12 border-border"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="release_date" className="text-base">Release Date *</Label>
+                  <Input
+                    id="release_date"
+                    name="release_date"
+                    type="date"
+                    value={formData.release_date}
+                    onChange={handleChange}
+                    className="h-12 border-border"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="poster_url" className="text-base">Poster URL *</Label>
+                  <Input
+                    id="poster_url"
+                    name="poster_url"
+                    value={formData.poster_url}
+                    onChange={handleChange}
+                    placeholder="https://..."
                     className="h-12 border-border"
                     required
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="director" className="text-base">Director *</Label>
+                <Label htmlFor="trailer_url" className="text-base">Trailer URL</Label>
                 <Input
-                  id="director"
-                  name="director"
-                  value={formData.director}
+                  id="trailer_url"
+                  name="trailer_url"
+                  value={formData.trailer_url}
                   onChange={handleChange}
+                  placeholder="https://..."
                   className="h-12 border-border"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="cast" className="text-base">Cast (comma separated) *</Label>
-                <Input
-                  id="cast"
-                  name="cast"
-                  value={formData.cast}
-                  onChange={handleChange}
-                  placeholder="Actor 1, Actor 2, Actor 3"
-                  className="h-12 border-border"
-                  required
                 />
               </div>
               <div className="space-y-2">
@@ -159,14 +195,16 @@ const CreateMovie = () => {
                 <Button 
                   type="submit" 
                   className="flex-1 h-12 bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                  disabled={loading}
                 >
-                  Create Movie
+                  {loading ? "Creating..." : "Create Movie"}
                 </Button>
                 <Button 
                   type="button" 
                   variant="outline" 
                   onClick={() => navigate("/movies")}
                   className="border-border h-12"
+                  disabled={loading}
                 >
                   Cancel
                 </Button>

@@ -5,17 +5,30 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Ticket, Mail, Lock, User } from "lucide-react";
+import { authAPI, authHelpers } from "@/lib/api";
+import { toast } from "sonner";
 
 const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Signup:", { name, email, password });
-    navigate("/");
+    setLoading(true);
+    
+    try {
+      const response = await authAPI.signup({ email, password, name });
+      authHelpers.setToken(response.token);
+      toast.success("Account created successfully!");
+      navigate("/");
+    } catch (error: any) {
+      toast.error(error.message || "Signup failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -86,8 +99,9 @@ const Signup = () => {
             <Button 
               type="submit" 
               className="w-full h-12 text-base bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
+              disabled={loading}
             >
-              Create Account
+              {loading ? "Creating account..." : "Create Account"}
             </Button>
           </form>
         </CardContent>
