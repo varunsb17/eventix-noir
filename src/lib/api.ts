@@ -1,5 +1,6 @@
 // API configuration and utilities
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+// Update this URL to match your backend deployment
+const API_BASE_URL = 'http://localhost:8080';
 
 // Get auth token from localStorage
 const getAuthToken = () => localStorage.getItem('auth_token');
