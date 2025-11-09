@@ -21,9 +21,19 @@ const Signup = () => {
     
     try {
       const response = await authAPI.signup({ email, password, name });
-      authHelpers.setToken(response.token);
-      toast.success("Account created successfully!");
-      navigate("/");
+      if (response.success && response.user_id) {
+        const [firstName, ...lastNameParts] = name.split(' ');
+        authHelpers.setUser({
+          user_id: response.user_id,
+          first_name: firstName,
+          last_name: lastNameParts.join(' ') || '',
+          email,
+        });
+        toast.success("Account created successfully!");
+        navigate("/");
+      } else {
+        toast.error("Signup failed");
+      }
     } catch (error: any) {
       toast.error(error.message || "Signup failed");
     } finally {

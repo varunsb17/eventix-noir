@@ -15,14 +15,12 @@ import { toast } from "sonner";
 
 export function UserNav() {
   const navigate = useNavigate();
-  const [userEmail, setUserEmail] = useState<string>("");
+  const [userName, setUserName] = useState<string>("");
 
   useEffect(() => {
-    // Get user info from token
-    const token = authHelpers.getToken();
-    if (token) {
-      // You could decode the JWT to get user info, for now using generic
-      setUserEmail("user");
+    const user = authHelpers.getUser();
+    if (user) {
+      setUserName(`${user.first_name} ${user.last_name}`.trim() || user.email);
     }
   }, []);
 
@@ -32,8 +30,12 @@ export function UserNav() {
     navigate("/");
   };
 
-  const getInitials = (email: string) => {
-    return email.charAt(0).toUpperCase();
+  const getInitials = (name: string) => {
+    const parts = name.split(' ');
+    if (parts.length >= 2) {
+      return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
   };
 
   return (
@@ -42,7 +44,7 @@ export function UserNav() {
         <button className="relative h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background">
           <Avatar className="h-10 w-10 border-2 border-primary/20">
             <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-primary-foreground">
-              {getInitials(userEmail)}
+              {getInitials(userName)}
             </AvatarFallback>
           </Avatar>
         </button>
@@ -50,9 +52,9 @@ export function UserNav() {
       <DropdownMenuContent className="w-56 bg-popover" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">My Account</p>
+            <p className="text-sm font-medium leading-none">{userName}</p>
             <p className="text-xs leading-none text-muted-foreground">
-              {userEmail}
+              My Account
             </p>
           </div>
         </DropdownMenuLabel>

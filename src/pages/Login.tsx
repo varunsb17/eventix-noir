@@ -20,9 +20,13 @@ const Login = () => {
     
     try {
       const response = await authAPI.login({ email, password });
-      authHelpers.setToken(response.token);
-      toast.success("Login successful!");
-      navigate("/");
+      if (response.success && response.user) {
+        authHelpers.setUser({ ...response.user, email });
+        toast.success("Login successful!");
+        navigate("/");
+      } else {
+        toast.error("Login failed");
+      }
     } catch (error: any) {
       toast.error(error.message || "Login failed");
     } finally {
