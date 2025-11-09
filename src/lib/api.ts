@@ -108,6 +108,7 @@ export const bookingsAPI = {
 
 // Auth helpers
 export const authHelpers = {
+  getToken: () => getAuthToken(),
   setToken: (token: string) => localStorage.setItem('auth_token', token),
   removeToken: () => localStorage.removeItem('auth_token'),
   isAuthenticated: () => !!getAuthToken(),
